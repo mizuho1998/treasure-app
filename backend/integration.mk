@@ -38,3 +38,7 @@ req-private:
 
 database-init:
 	make -C ../database init
+
+
+req-keyboard-serch:
+	curl -v -XPOST  $(HOST):$(PORT)/keyboard -d '{"is_split": 1,"color": "black","key_num": 64,"matrix": "koushi","key_profile": "low"}'

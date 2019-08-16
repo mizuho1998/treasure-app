@@ -60,7 +60,7 @@ func (s *Server) Run(addr string) {
 }
 
 func (s *Server) Route() *mux.Router {
-	authMiddleware := middleware.NewAuth(s.authClient, s.db)
+	// authMiddleware := middleware.NewAuth(s.authClient, s.db)
 	corsMiddleware := cors.New(cors.Options{
 		AllowedOrigins: []string{"*"},
 		AllowedHeaders: []string{"Authorization"},
@@ -71,21 +71,20 @@ func (s *Server) Route() *mux.Router {
 		corsMiddleware.Handler,
 	)
 
-	authChain := commonChain.Append(
-		authMiddleware.Handler,
-	)
+	// authChain := commonChain.Append(
+	// 	authMiddleware.Handler,
+	// )
 
 	r := mux.NewRouter()
 	r.Methods(http.MethodGet).Path("/public").Handler(commonChain.Then(sample.NewPublicHandler()))
-	r.Methods(http.MethodGet).Path("/private").Handler(authChain.Then(sample.NewPrivateHandler(s.db)))
+	r.Methods(http.MethodGet).Path("/private").Handler(commonChain.Then(sample.NewPrivateHandler(s.db)))
 
-	articleController := controller.NewArticle(s.db)
-	r.Methods(http.MethodPost).Path("/articles").Handler(authChain.Then(AppHandler{articleController.Create}))
-	r.Methods(http.MethodPut).Path("/articles/{id}").Handler(authChain.Then(AppHandler{articleController.Update}))
-	r.Methods(http.MethodDelete).Path("/articles/{id}").Handler(authChain.Then(AppHandler{articleController.Destroy}))
-	r.Methods(http.MethodGet).Path("/articles").Handler(commonChain.Then(AppHandler{articleController.Index}))
-	r.Methods(http.MethodGet).Path("/articles/{id}").Handler(commonChain.Then(AppHandler{articleController.Show}))
+	keyboardController := controller.NewKeyboard(s.db)
+	r.Methods(http.MethodPost).Path("/keyboard").Handler(commonChain.Then(AppHandler{keyboardController.Serch}))
+	r.Methods(http.MethodGet).Path("/keyboard/{id}").Handler(commonChain.Then(AppHandler{keyboardController.Show}))
 
-	r.PathPrefix("").Handler(commonChain.Then(http.StripPrefix("/img", http.FileServer(http.Dir("./img")))))
+	questionController := controller.NewQuestion(s.db)
+	r.Methods(http.MethodGet).Path("/question/{id}").Handler(commonChain.Then(AppHandler{questionController.Show}))
+
 	return r
 }
