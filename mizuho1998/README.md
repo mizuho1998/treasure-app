@@ -1,21 +1,23 @@
-# treasure-app
+# 中間課題
 
-> Remember, Makefile is always your friend
+### 成果物
+- 自作キーボード推薦システム
+    - 質問に答えて選択肢を絞っていき、好みに合った自作キーボードをすすめる
+    
+### やったこと
+- DB
+    - キーボード、質問のデーターベースを作成
+- APIサーバー
+    - フロントからのリクエストを受けるエンドポイントの作成
+    - sqlの実行
+- React
+    - いい感じのUI
+    - fetch
 
-### local環境
-```
-❯ docker --version
-Docker version 18.09.2, build 6247962
+### できなかったこと
+- 推薦のアルゴリズムは単純
+- 時間が厳しかったのでコードが汚い
+- Reactもっときれいに完結に書けそう
+- 各質問に対するsqlを愚直に用意して検索したが、もっといい方法はないのだろうか
+- システムアーキテクト難しい
 
-❯ go version
-go version go1.12.7 darwin/amd64
-
-❯ node --version
-v10.15.3
-
-❯ npm -v
-6.4.1
-```
-
-### Links
- - https://12factor.net
