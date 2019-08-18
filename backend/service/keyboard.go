@@ -39,14 +39,10 @@ func (a *Keyboard) Serch(requestSerchKeyboard *model.RequestSerchKeyboard) (*[]m
 		fmt.Println("split")
 		fmt.Println(keyboards)
 	case 2:
-		keyboards, err = repository.SerchKeyboardByLed(a.db, serchKeyboard)
-		fmt.Println("led")
-		fmt.Println(keyboards)
-	case 3, 6, 7:
 		keyboards, err = repository.SerchKeyboardByMatrix(a.db, serchKeyboard)
 		fmt.Println("matrix")
 		fmt.Println(keyboards)
-	case 4:
+	case 3:
 		if serchKeyboard.Answer == "0" {
 			keyboards, err = repository.SerchKeyboardByKeyNumSmall(a.db, serchKeyboard)
 		} else {
@@ -54,9 +50,13 @@ func (a *Keyboard) Serch(requestSerchKeyboard *model.RequestSerchKeyboard) (*[]m
 		}
 		fmt.Println("key_num")
 		fmt.Println(keyboards)
-	case 5:
+	case 4:
 		keyboards, err = repository.SerchKeyboardByProfile(a.db, serchKeyboard)
 		fmt.Println("profile")
+		fmt.Println(keyboards)
+	case 5:
+		keyboards, err = repository.SerchKeyboardByLed(a.db, serchKeyboard)
+		fmt.Println("led")
 		fmt.Println(keyboards)
 	}
 
