@@ -29,21 +29,21 @@ func (a *Question) Index(w http.ResponseWriter, r *http.Request) (int, interface
 	return http.StatusOK, questions, nil
 }
 
-func (a *Question) Show(w http.ResponseWriter, r *http.Request) (int, interface{}, error) {
-	fmt.Println("controller/question Show()")
+func (a *Question) Find(w http.ResponseWriter, r *http.Request) (int, interface{}, error) {
+	fmt.Println("controller/question Serch()")
 	vars := mux.Vars(r)
 	id, ok := vars["id"]
 	if !ok {
 		return http.StatusBadRequest, nil, &httputil.HTTPError{Message: "invalid path parameter"}
 	}
 
-	kid, err := strconv.ParseInt(id, 10, 64)
+	qid, err := strconv.ParseInt(id, 10, 64)
 	if err != nil {
 		return http.StatusBadRequest, nil, err
 	}
-	fmt.Printf("id: %d\n", kid)
+	fmt.Printf("id: %d\n", qid)
 
-	question, err := repository.FindQuestion(a.db, kid)
+	question, err := repository.FindQuestion(a.db, qid)
 	if err != nil && err == sql.ErrNoRows {
 		return http.StatusNotFound, nil, err
 	} else if err != nil {

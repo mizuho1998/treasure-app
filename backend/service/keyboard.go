@@ -1,8 +1,10 @@
 package service
 
 import (
+	"database/sql"
+	"fmt"
+
 	"github.com/jmoiron/sqlx"
-	"github.com/pkg/errors"
 
 	"github.com/voyagegroup/treasure-app/model"
 	"github.com/voyagegroup/treasure-app/repository"
@@ -12,28 +14,47 @@ type Keyboard struct {
 	db *sqlx.DB
 }
 
-func NewKeyboard(db *sqlx.DB) *Keyboard {
+func NewKeyboardService(db *sqlx.DB) *Keyboard {
 	return &Keyboard{db}
 }
 
-func (a *Keyboard) Update(id int64, newKeyboard *model.Keyboard) error {
-	_, err := repository.FindKeyboard(a.db, id)
-	if err != nil {
-		return errors.Wrap(err, "failed find keyboard")
+func (a *Keyboard) Serch(requestSerchKeyboard *model.RequestSerchKeyboard) (*[]model.KeyboardID, error) {
+	fmt.Println("service/keyboard Serch()")
+	qid := requestSerchKeyboard.QID
+	serchKeyboard := &model.SerchKeyboard{}
+	serchKeyboard.IDs = requestSerchKeyboard.IDs
+	serchKeyboard.Answer = requestSerchKeyboard.Answer
+
+	keyboards := &[]model.KeyboardID{}
+	var err error
+
+	fmt.Println("#############")
+	fmt.Println(qid)
+	fmt.Println("#############")
+
+	switch qid {
+	case 1:
+		keyboards, err = repository.SerchKeyboardBySplit(a.db, serchKeyboard)
+	case 2:
+		keyboards, err = repository.SerchKeyboardByLed(a.db, serchKeyboard)
+	case 3, 6, 7:
+		keyboards, err = repository.SerchKeyboardByMatrix(a.db, serchKeyboard)
+	case 4:
+		if serchKeyboard.Answer == "0" {
+			keyboards, err = repository.SerchKeyboardByKeyNumSmall(a.db, serchKeyboard)
+		} else {
+			keyboards, err = repository.SerchKeyboardByKeyNumLearge(a.db, serchKeyboard)
+		}
+	case 5:
+		keyboards, err = repository.SerchKeyboardByProfile(a.db, serchKeyboard)
+	}
+	fmt.Println(keyboards)
+
+	if err != nil && err == sql.ErrNoRows {
+		return nil, err
+	} else if err != nil {
+		return nil, err
 	}
 
-	// if err := dbutil.TXHandler(a.db, func(tx *sqlx.Tx) error {
-	// 	_, err := repository.UpdateKeyboard(tx, id, newKeyboard)
-	// 	if err != nil {
-	// 		return err
-	// 	}
-	// 	if err := tx.Commit(); err != nil {
-	// 		return err
-	// 	}
-	// 	return err
-	// }); err != nil {
-	// 	return errors.Wrap(err, "failed keyboard update transaction")
-	// }
-
-	return nil
+	return keyboards, nil
 }

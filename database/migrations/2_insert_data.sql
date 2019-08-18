@@ -30,13 +30,13 @@ VALUES
 ("HelixPico", "", 8200, "https://yushakobo.jp/shop/helixpico/", "https://yushakobo.jp/wp-content/uploads/2018/07/HelixPico_keikou.jpg", 1, 1, 50, "K", "low", "green");
 
 
-INSERT INTO questions(question) 
+INSERT INTO questions(id, question, answer1, answer2, answer3, answer1_val, answer2_val, answer3_val) 
 VALUES
-("左右分離が良い?"),
-("LEDで光らせたい?"),
-("キーの数は多いほうがいい?"),
-("キーストロークは浅いほうが好き?"),
-("黒は好き？")
+(1, "左右分離が良い?", "yes", "no", NULL,"1","0", NULL),
+(2, "LEDで光らせたい?", "yes", "no", NULL,"1","0", NULL),
+(3, "キーの配列どれがいい?", "Row-Staggered", "Column-Staggered", "格子","RS","CS", "K"),
+(4, "キーの数は多いほうがいい?", "yes", "no", NULL,"1","0", NULL),
+(5, "キーストロークは浅いほうが好き?", "yes", "no", NULL,"1","0", NULL)
 ;
 
 -- +goose Down

@@ -9,12 +9,24 @@ import (
 	"github.com/voyagegroup/treasure-app/model"
 )
 
-func AllKeyboard(db *sqlx.DB) ([]model.Keyboard, error) {
-	a := make([]model.Keyboard, 0)
-	if err := db.Select(&a, `SELECT id, title, body FROM keyboard`); err != nil {
-		return nil, err
+func AllKeyboard(db *sqlx.DB) (*[]model.KeyboardID, error) {
+	keyboardList := []model.KeyboardID{}
+
+	rows, err := db.Queryx(`SELECT id from keyboards`)
+
+	if err != nil {
+		panic(err)
 	}
-	return a, nil
+
+	for rows.Next() {
+		k := model.KeyboardID{}
+		err = rows.StructScan(&k)
+		keyboardList = append(keyboardList, k)
+	}
+	fmt.Println("repository/keyboard AllKeyboard()")
+	fmt.Println(keyboardList)
+
+	return &keyboardList, nil
 }
 
 func FindKeyboard(db *sqlx.DB, id int64) (*model.Keyboard, error) {
@@ -35,13 +47,15 @@ func intToStringArray(arr []int) []string {
 	return f
 }
 
-func SerchKeyboard(db *sqlx.DB, rsk *model.RequestSerchKeyboard) (*[]model.Keyboard, error) {
-	keyboardList := []model.Keyboard{}
+func SerchKeyboard(db *sqlx.DB, rsk *model.SerchKeyboard) (*[]model.KeyboardID, error) {
+	fmt.Println("repository/keyboard SerchKeyboard()")
+	keyboardList := []model.KeyboardID{}
 
 	args := make([]interface{}, len(rsk.IDs))
-	for i, id := range rsk.IDs {
-		args[i] = id
+	for i, kid := range rsk.IDs {
+		args[i] = kid.ID
 	}
+	fmt.Println(args)
 
 	stmt := `SELECT id from keyboards where id in (?` + strings.Repeat(",?", len(rsk.IDs)-1) + `)`
 	rows, err := db.Queryx(stmt, args...)
@@ -51,7 +65,7 @@ func SerchKeyboard(db *sqlx.DB, rsk *model.RequestSerchKeyboard) (*[]model.Keybo
 	}
 
 	for rows.Next() {
-		k := model.Keyboard{}
+		k := model.KeyboardID{}
 		err = rows.StructScan(&k)
 		keyboardList = append(keyboardList, k)
 	}
@@ -59,3 +73,173 @@ func SerchKeyboard(db *sqlx.DB, rsk *model.RequestSerchKeyboard) (*[]model.Keybo
 
 	return &keyboardList, nil
 }
+
+func SerchKeyboardBySplit(db *sqlx.DB, sk *model.SerchKeyboard) (*[]model.KeyboardID, error) {
+	fmt.Println("repository/keyboard SerchKeyboard()")
+	keyboardList := []model.KeyboardID{}
+
+	args := make([]interface{}, len(sk.IDs)+1)
+	for i, kid := range sk.IDs {
+		args[i] = kid.ID
+	}
+	args[len(sk.IDs)] = sk.Answer
+	fmt.Println(args)
+
+	stmt := `SELECT id from keyboards where id in (?` + strings.Repeat(",?", len(sk.IDs)-1) + `) AND split = ?`
+	rows, err := db.Queryx(stmt, args...)
+
+	if err != nil {
+		panic(err)
+	}
+
+	for rows.Next() {
+		k := model.KeyboardID{}
+		err = rows.StructScan(&k)
+		keyboardList = append(keyboardList, k)
+	}
+	fmt.Println(keyboardList)
+
+	return &keyboardList, nil
+}
+
+func SerchKeyboardByLed(db *sqlx.DB, sk *model.SerchKeyboard) (*[]model.KeyboardID, error) {
+	fmt.Println("repository/keyboard SerchKeyboard()")
+	keyboardList := []model.KeyboardID{}
+
+	args := make([]interface{}, len(sk.IDs)+1)
+	for i, kid := range sk.IDs {
+		args[i] = kid.ID
+	}
+	args[len(sk.IDs)] = sk.Answer
+	fmt.Println(args)
+
+	stmt := `SELECT id from keyboards where id in (?` + strings.Repeat(",?", len(sk.IDs)-1) + `) AND led = ?`
+	rows, err := db.Queryx(stmt, args...)
+
+	if err != nil {
+		panic(err)
+	}
+
+	for rows.Next() {
+		k := model.KeyboardID{}
+		err = rows.StructScan(&k)
+		keyboardList = append(keyboardList, k)
+	}
+	fmt.Println(keyboardList)
+
+	return &keyboardList, nil
+}
+
+func SerchKeyboardByKeyNumLearge(db *sqlx.DB, sk *model.SerchKeyboard) (*[]model.KeyboardID, error) {
+	fmt.Println("repository/keyboard SerchKeyboard()")
+	keyboardList := []model.KeyboardID{}
+
+	args := make([]interface{}, len(sk.IDs))
+	for i, kid := range sk.IDs {
+		args[i] = kid.ID
+	}
+	// args[len(sk.IDs)] = sk.Answer
+	fmt.Println(args)
+
+	stmt := `SELECT id from keyboards where id in (?` + strings.Repeat(",?", len(sk.IDs)-1) + `) AND key_num >= 65`
+	rows, err := db.Queryx(stmt, args...)
+
+	if err != nil {
+		panic(err)
+	}
+
+	for rows.Next() {
+		k := model.KeyboardID{}
+		err = rows.StructScan(&k)
+		keyboardList = append(keyboardList, k)
+	}
+	fmt.Println(keyboardList)
+
+	return &keyboardList, nil
+}
+
+func SerchKeyboardByKeyNumSmall(db *sqlx.DB, sk *model.SerchKeyboard) (*[]model.KeyboardID, error) {
+	fmt.Println("repository/keyboard SerchKeyboard()")
+	keyboardList := []model.KeyboardID{}
+
+	args := make([]interface{}, len(sk.IDs))
+	for i, kid := range sk.IDs {
+		args[i] = kid.ID
+	}
+	// args[len(sk.IDs)] = sk.Answer
+	fmt.Println(args)
+
+	stmt := `SELECT id from keyboards where id in (?` + strings.Repeat(",?", len(sk.IDs)-1) + `) AND key_num < 65`
+	rows, err := db.Queryx(stmt, args...)
+
+	if err != nil {
+		panic(err)
+	}
+
+	for rows.Next() {
+		k := model.KeyboardID{}
+		err = rows.StructScan(&k)
+		keyboardList = append(keyboardList, k)
+	}
+	fmt.Println(keyboardList)
+
+	return &keyboardList, nil
+}
+
+func SerchKeyboardByMatrix(db *sqlx.DB, sk *model.SerchKeyboard) (*[]model.KeyboardID, error) {
+	fmt.Println("repository/keyboard SerchKeyboard()")
+	keyboardList := []model.KeyboardID{}
+
+	args := make([]interface{}, len(sk.IDs)+1)
+	for i, kid := range sk.IDs {
+		args[i] = kid.ID
+	}
+	args[len(sk.IDs)] = sk.Answer
+	fmt.Println(args)
+
+	stmt := `SELECT id from keyboards where id in (?` + strings.Repeat(",?", len(sk.IDs)-1) + `) AND matrix = ?`
+	rows, err := db.Queryx(stmt, args...)
+
+	if err != nil {
+		panic(err)
+	}
+
+	for rows.Next() {
+		k := model.KeyboardID{}
+		err = rows.StructScan(&k)
+		keyboardList = append(keyboardList, k)
+	}
+	fmt.Println(keyboardList)
+
+	return &keyboardList, nil
+}
+
+func SerchKeyboardByProfile(db *sqlx.DB, sk *model.SerchKeyboard) (*[]model.KeyboardID, error) {
+	fmt.Println("repository/keyboard SerchKeyboard()")
+	keyboardList := []model.KeyboardID{}
+
+	args := make([]interface{}, len(sk.IDs)+1)
+	for i, kid := range sk.IDs {
+		args[i] = kid.ID
+	}
+	args[len(sk.IDs)] = sk.Answer
+	fmt.Println(args)
+
+	stmt := `SELECT id from keyboards where id in (?` + strings.Repeat(",?", len(sk.IDs)-1) + `) AND key_profile = ?`
+	rows, err := db.Queryx(stmt, args...)
+
+	if err != nil {
+		panic(err)
+	}
+
+	for rows.Next() {
+		k := model.KeyboardID{}
+		err = rows.StructScan(&k)
+		keyboardList = append(keyboardList, k)
+	}
+	fmt.Println(keyboardList)
+
+	return &keyboardList, nil
+}
+
+// split, led, key_num, matrix, key_profile, color

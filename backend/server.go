@@ -64,6 +64,7 @@ func (s *Server) Route() *mux.Router {
 	corsMiddleware := cors.New(cors.Options{
 		AllowedOrigins: []string{"*"},
 		AllowedHeaders: []string{"Authorization"},
+		AllowedMethods: []string{"GET", "POST", "DELETE", "PUT"},
 	})
 
 	commonChain := alice.New(
@@ -80,11 +81,12 @@ func (s *Server) Route() *mux.Router {
 	r.Methods(http.MethodGet).Path("/private").Handler(commonChain.Then(sample.NewPrivateHandler(s.db)))
 
 	keyboardController := controller.NewKeyboard(s.db)
+	r.Methods(http.MethodGet).Path("/keyboard").Handler(commonChain.Then(AppHandler{keyboardController.AllKeyboard}))
 	r.Methods(http.MethodPost).Path("/keyboard").Handler(commonChain.Then(AppHandler{keyboardController.Serch}))
-	r.Methods(http.MethodGet).Path("/keyboard/{id}").Handler(commonChain.Then(AppHandler{keyboardController.Show}))
+	r.Methods(http.MethodGet).Path("/keyboard/{id}").Handler(commonChain.Then(AppHandler{keyboardController.FindKeyboard}))
 
 	questionController := controller.NewQuestion(s.db)
-	r.Methods(http.MethodGet).Path("/question/{id}").Handler(commonChain.Then(AppHandler{questionController.Show}))
+	r.Methods(http.MethodGet).Path("/question/{id}").Handler(commonChain.Then(AppHandler{questionController.Find}))
 
 	return r
 }
