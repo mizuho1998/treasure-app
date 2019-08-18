@@ -1,5 +1,5 @@
 -- +goose Up
-INSERT INTO keyboards(name, creater_name, price, url, image_url, split, led, key_num, matrix, key_profile, color) 
+INSERT INTO keyboards(name, creater_name, price, url, image_url, split, led, key_num, matrix, key_profile, color)
 VALUES
 ("Gingham", "", 8000, "https://yushakobo.jp/shop/gingham/", "https://yushakobo.jp/wp-content/uploads/2019/08/A0100GH-3.jpg", 0, 0, 60, "RS", "high", "black"),
 ("UT47.2", "", 7500, "https://yushakobo.jp/shop/ut472/", "https://yushakobo.jp/wp-content/uploads/2019/06/A0100UT.jpg", 0, 1, 47, "RS", "high", "purple"),
@@ -30,7 +30,14 @@ VALUES
 ("HelixPico", "", 8200, "https://yushakobo.jp/shop/helixpico/", "https://yushakobo.jp/wp-content/uploads/2018/07/HelixPico_keikou.jpg", 1, 1, 50, "K", "low", "green");
 
 
-INSERT INTO questions(question) VALUES("question!!");
+INSERT INTO questions(question) 
+VALUES
+("左右分離が良い?"),
+("LEDで光らせたい?"),
+("キーの数は多いほうがいい?"),
+("キーストロークは浅いほうが好き?"),
+("黒は好き？")
+;
 
 -- +goose Down
 DELETE FROM keyboards;
