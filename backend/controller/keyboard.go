@@ -62,6 +62,7 @@ func (a *Keyboard) Serch(w http.ResponseWriter, r *http.Request) (int, interface
 	}
 
 	FindKeyboard := &model.RequestSerchKeyboard{
+		IDs:        reqParam.IDs,
 		IsSplit:    reqParam.IsSplit,
 		Color:      reqParam.Color,
 		KeyNum:     reqParam.KeyNum,

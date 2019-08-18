@@ -41,4 +41,4 @@ database-init:
 
 
 req-keyboard-serch:
-	curl -v -XPOST  $(HOST):$(PORT)/keyboard -d '{"is_split": 1,"color": "black","key_num": 64,"matrix": "koushi","key_profile": "low"}'
+	curl -v -XPOST  $(HOST):$(PORT)/keyboard -d '{"ids":[1,2,3], "is_split": 1,"color": "black","key_num": 64,"matrix": "koushi","key_profile": "low"}'

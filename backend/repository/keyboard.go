@@ -2,6 +2,8 @@ package repository
 
 import (
 	"fmt"
+	"strconv"
+	"strings"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/voyagegroup/treasure-app/model"
@@ -25,20 +27,25 @@ SELECT id, name, creater_name, url FROM keyboards WHERE id = ?
 	return &a, nil
 }
 
+func intToStringArray(arr []int) []string {
+	f := make([]string, len(arr))
+	for n := range arr {
+		f[n] = strconv.Itoa(arr[n])
+	}
+	return f
+}
+
 func SerchKeyboard(db *sqlx.DB, rsk *model.RequestSerchKeyboard) (*[]model.Keyboard, error) {
-	// 	a := model.Keyboard{}
-	// 	if err := db.Get(&a, `
-	// SELECT id FROM keyboards
-	// `); err != nil {
-	// 		return nil, err
-	// 	}
 	keyboardList := []model.Keyboard{}
 
-	fmt.Println(rsk)
+	args := make([]interface{}, len(rsk.IDs))
+	for i, id := range rsk.IDs {
+		args[i] = id
+	}
 
-	rows, err := db.Queryx(`
-	SELECT id FROM keyboards where is_split = ? AND color = ? AND key_num = ? AND matrix = ? AND key_profile = ?
-	`, rsk.IsSplit, rsk.Color, rsk.KeyNum, rsk.Matrix, rsk.KeyProfile)
+	stmt := `SELECT id from keyboards where id in (?` + strings.Repeat(",?", len(rsk.IDs)-1) + `)`
+	rows, err := db.Queryx(stmt, args...)
+
 	if err != nil {
 		panic(err)
 	}

@@ -1,6 +1,7 @@
 package model
 
 type RequestSerchKeyboard struct {
+	IDs        []int  `db:"id" json:"ids"`
 	IsSplit    int64  `db:"is_split" json:"is_split"`
 	Color      string `db:"color" json:"color"`
 	KeyNum     int64  `db:"key_num" json:"key_num"`
