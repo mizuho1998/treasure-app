@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"reflect"
 	"strconv"
 
 	"github.com/gorilla/mux"
@@ -41,8 +40,6 @@ func (a *Keyboard) AllKeyboard(w http.ResponseWriter, r *http.Request) (int, int
 	} else if err != nil {
 		return http.StatusInternalServerError, nil, err
 	}
-	fmt.Println("controller/keyboard AllKeyboard()")
-	fmt.Println(keyboard)
 
 	return http.StatusCreated, keyboard, nil
 }
@@ -70,26 +67,14 @@ func (a *Keyboard) FindKeyboard(w http.ResponseWriter, r *http.Request) (int, in
 }
 
 func (a *Keyboard) Serch(w http.ResponseWriter, r *http.Request) (int, interface{}, error) {
-	fmt.Println("keyboard controller Serch")
 
 	serchKeyboard := &model.RequestSerchKeyboard{}
 	if err := json.NewDecoder(r.Body).Decode(&serchKeyboard); err != nil {
 		return http.StatusBadRequest, nil, err
 	}
-
-	// serchKeyboard := &model.RequestSerchKeyboard{
-	// 	IDs:    reqParam.IDs,
-	// 	QID:    reqParam.QID,
-	// 	Answer: reqParam.Answer,
-	// }
+	fmt.Println("?????????????????????????????????????/")
 	fmt.Println(serchKeyboard)
 
-	// keyboards, err := repository.SerchKeyboard(a.db, serchKeyboard)
-	// if err != nil && err == sql.ErrNoRows {
-	// 	return http.StatusNotFound, nil, err
-	// } else if err != nil {
-	// 	return http.StatusInternalServerError, nil, err
-	// }
 	keyboardService := service.NewKeyboardService(a.db)
 	keyboards, err := keyboardService.Serch(serchKeyboard)
 	if err != nil && err == sql.ErrNoRows {
@@ -97,9 +82,6 @@ func (a *Keyboard) Serch(w http.ResponseWriter, r *http.Request) (int, interface
 	} else if err != nil {
 		return http.StatusInternalServerError, nil, err
 	}
-	fmt.Println("controller Serch() end")
-	fmt.Println(keyboards)
-	fmt.Println(reflect.TypeOf(keyboards))
 
 	return http.StatusCreated, keyboards, nil
 }

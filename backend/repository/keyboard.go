@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 
@@ -23,8 +22,6 @@ func AllKeyboard(db *sqlx.DB) (*[]model.KeyboardID, error) {
 		err = rows.StructScan(&k)
 		keyboardList = append(keyboardList, k)
 	}
-	fmt.Println("repository/keyboard AllKeyboard()")
-	fmt.Println(keyboardList)
 
 	return &keyboardList, nil
 }
@@ -32,7 +29,7 @@ func AllKeyboard(db *sqlx.DB) (*[]model.KeyboardID, error) {
 func FindKeyboard(db *sqlx.DB, id int64) (*model.Keyboard, error) {
 	a := model.Keyboard{}
 	if err := db.Get(&a, `
-SELECT id, name, creater_name, url FROM keyboards WHERE id = ?
+SELECT id, name, creater_name, price, url, image_url FROM keyboards WHERE id = ?
 `, id); err != nil {
 		return nil, err
 	}
@@ -48,14 +45,12 @@ func intToStringArray(arr []int) []string {
 }
 
 func SerchKeyboard(db *sqlx.DB, rsk *model.SerchKeyboard) (*[]model.KeyboardID, error) {
-	fmt.Println("repository/keyboard SerchKeyboard()")
 	keyboardList := []model.KeyboardID{}
 
 	args := make([]interface{}, len(rsk.IDs))
 	for i, kid := range rsk.IDs {
 		args[i] = kid.ID
 	}
-	fmt.Println(args)
 
 	stmt := `SELECT id from keyboards where id in (?` + strings.Repeat(",?", len(rsk.IDs)-1) + `)`
 	rows, err := db.Queryx(stmt, args...)
@@ -69,13 +64,11 @@ func SerchKeyboard(db *sqlx.DB, rsk *model.SerchKeyboard) (*[]model.KeyboardID, 
 		err = rows.StructScan(&k)
 		keyboardList = append(keyboardList, k)
 	}
-	fmt.Println(keyboardList)
 
 	return &keyboardList, nil
 }
 
 func SerchKeyboardBySplit(db *sqlx.DB, sk *model.SerchKeyboard) (*[]model.KeyboardID, error) {
-	fmt.Println("repository/keyboard SerchKeyboard()")
 	keyboardList := []model.KeyboardID{}
 
 	args := make([]interface{}, len(sk.IDs)+1)
@@ -83,7 +76,6 @@ func SerchKeyboardBySplit(db *sqlx.DB, sk *model.SerchKeyboard) (*[]model.Keyboa
 		args[i] = kid.ID
 	}
 	args[len(sk.IDs)] = sk.Answer
-	fmt.Println(args)
 
 	stmt := `SELECT id from keyboards where id in (?` + strings.Repeat(",?", len(sk.IDs)-1) + `) AND split = ?`
 	rows, err := db.Queryx(stmt, args...)
@@ -97,13 +89,11 @@ func SerchKeyboardBySplit(db *sqlx.DB, sk *model.SerchKeyboard) (*[]model.Keyboa
 		err = rows.StructScan(&k)
 		keyboardList = append(keyboardList, k)
 	}
-	fmt.Println(keyboardList)
 
 	return &keyboardList, nil
 }
 
 func SerchKeyboardByLed(db *sqlx.DB, sk *model.SerchKeyboard) (*[]model.KeyboardID, error) {
-	fmt.Println("repository/keyboard SerchKeyboard()")
 	keyboardList := []model.KeyboardID{}
 
 	args := make([]interface{}, len(sk.IDs)+1)
@@ -111,7 +101,6 @@ func SerchKeyboardByLed(db *sqlx.DB, sk *model.SerchKeyboard) (*[]model.Keyboard
 		args[i] = kid.ID
 	}
 	args[len(sk.IDs)] = sk.Answer
-	fmt.Println(args)
 
 	stmt := `SELECT id from keyboards where id in (?` + strings.Repeat(",?", len(sk.IDs)-1) + `) AND led = ?`
 	rows, err := db.Queryx(stmt, args...)
@@ -125,21 +114,17 @@ func SerchKeyboardByLed(db *sqlx.DB, sk *model.SerchKeyboard) (*[]model.Keyboard
 		err = rows.StructScan(&k)
 		keyboardList = append(keyboardList, k)
 	}
-	fmt.Println(keyboardList)
 
 	return &keyboardList, nil
 }
 
 func SerchKeyboardByKeyNumLearge(db *sqlx.DB, sk *model.SerchKeyboard) (*[]model.KeyboardID, error) {
-	fmt.Println("repository/keyboard SerchKeyboard()")
 	keyboardList := []model.KeyboardID{}
 
 	args := make([]interface{}, len(sk.IDs))
 	for i, kid := range sk.IDs {
 		args[i] = kid.ID
 	}
-	// args[len(sk.IDs)] = sk.Answer
-	fmt.Println(args)
 
 	stmt := `SELECT id from keyboards where id in (?` + strings.Repeat(",?", len(sk.IDs)-1) + `) AND key_num >= 65`
 	rows, err := db.Queryx(stmt, args...)
@@ -153,21 +138,17 @@ func SerchKeyboardByKeyNumLearge(db *sqlx.DB, sk *model.SerchKeyboard) (*[]model
 		err = rows.StructScan(&k)
 		keyboardList = append(keyboardList, k)
 	}
-	fmt.Println(keyboardList)
 
 	return &keyboardList, nil
 }
 
 func SerchKeyboardByKeyNumSmall(db *sqlx.DB, sk *model.SerchKeyboard) (*[]model.KeyboardID, error) {
-	fmt.Println("repository/keyboard SerchKeyboard()")
 	keyboardList := []model.KeyboardID{}
 
 	args := make([]interface{}, len(sk.IDs))
 	for i, kid := range sk.IDs {
 		args[i] = kid.ID
 	}
-	// args[len(sk.IDs)] = sk.Answer
-	fmt.Println(args)
 
 	stmt := `SELECT id from keyboards where id in (?` + strings.Repeat(",?", len(sk.IDs)-1) + `) AND key_num < 65`
 	rows, err := db.Queryx(stmt, args...)
@@ -181,13 +162,11 @@ func SerchKeyboardByKeyNumSmall(db *sqlx.DB, sk *model.SerchKeyboard) (*[]model.
 		err = rows.StructScan(&k)
 		keyboardList = append(keyboardList, k)
 	}
-	fmt.Println(keyboardList)
 
 	return &keyboardList, nil
 }
 
 func SerchKeyboardByMatrix(db *sqlx.DB, sk *model.SerchKeyboard) (*[]model.KeyboardID, error) {
-	fmt.Println("repository/keyboard SerchKeyboard()")
 	keyboardList := []model.KeyboardID{}
 
 	args := make([]interface{}, len(sk.IDs)+1)
@@ -195,7 +174,6 @@ func SerchKeyboardByMatrix(db *sqlx.DB, sk *model.SerchKeyboard) (*[]model.Keybo
 		args[i] = kid.ID
 	}
 	args[len(sk.IDs)] = sk.Answer
-	fmt.Println(args)
 
 	stmt := `SELECT id from keyboards where id in (?` + strings.Repeat(",?", len(sk.IDs)-1) + `) AND matrix = ?`
 	rows, err := db.Queryx(stmt, args...)
@@ -209,13 +187,11 @@ func SerchKeyboardByMatrix(db *sqlx.DB, sk *model.SerchKeyboard) (*[]model.Keybo
 		err = rows.StructScan(&k)
 		keyboardList = append(keyboardList, k)
 	}
-	fmt.Println(keyboardList)
 
 	return &keyboardList, nil
 }
 
 func SerchKeyboardByProfile(db *sqlx.DB, sk *model.SerchKeyboard) (*[]model.KeyboardID, error) {
-	fmt.Println("repository/keyboard SerchKeyboard()")
 	keyboardList := []model.KeyboardID{}
 
 	args := make([]interface{}, len(sk.IDs)+1)
@@ -223,7 +199,6 @@ func SerchKeyboardByProfile(db *sqlx.DB, sk *model.SerchKeyboard) (*[]model.Keyb
 		args[i] = kid.ID
 	}
 	args[len(sk.IDs)] = sk.Answer
-	fmt.Println(args)
 
 	stmt := `SELECT id from keyboards where id in (?` + strings.Repeat(",?", len(sk.IDs)-1) + `) AND key_profile = ?`
 	rows, err := db.Queryx(stmt, args...)
@@ -237,7 +212,6 @@ func SerchKeyboardByProfile(db *sqlx.DB, sk *model.SerchKeyboard) (*[]model.Keyb
 		err = rows.StructScan(&k)
 		keyboardList = append(keyboardList, k)
 	}
-	fmt.Println(keyboardList)
 
 	return &keyboardList, nil
 }

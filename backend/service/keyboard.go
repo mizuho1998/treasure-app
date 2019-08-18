@@ -19,36 +19,46 @@ func NewKeyboardService(db *sqlx.DB) *Keyboard {
 }
 
 func (a *Keyboard) Serch(requestSerchKeyboard *model.RequestSerchKeyboard) (*[]model.KeyboardID, error) {
-	fmt.Println("service/keyboard Serch()")
 	qid := requestSerchKeyboard.QID
 	serchKeyboard := &model.SerchKeyboard{}
 	serchKeyboard.IDs = requestSerchKeyboard.IDs
 	serchKeyboard.Answer = requestSerchKeyboard.Answer
 
+	fmt.Println("!!!!!!!!!!!!!")
+	fmt.Println(requestSerchKeyboard)
+	fmt.Println(requestSerchKeyboard.Answer)
+	fmt.Println(serchKeyboard.Answer)
+	fmt.Println(serchKeyboard)
+
 	keyboards := &[]model.KeyboardID{}
 	var err error
-
-	fmt.Println("#############")
-	fmt.Println(qid)
-	fmt.Println("#############")
 
 	switch qid {
 	case 1:
 		keyboards, err = repository.SerchKeyboardBySplit(a.db, serchKeyboard)
+		fmt.Println("split")
+		fmt.Println(keyboards)
 	case 2:
 		keyboards, err = repository.SerchKeyboardByLed(a.db, serchKeyboard)
+		fmt.Println("led")
+		fmt.Println(keyboards)
 	case 3, 6, 7:
 		keyboards, err = repository.SerchKeyboardByMatrix(a.db, serchKeyboard)
+		fmt.Println("matrix")
+		fmt.Println(keyboards)
 	case 4:
 		if serchKeyboard.Answer == "0" {
 			keyboards, err = repository.SerchKeyboardByKeyNumSmall(a.db, serchKeyboard)
 		} else {
 			keyboards, err = repository.SerchKeyboardByKeyNumLearge(a.db, serchKeyboard)
 		}
+		fmt.Println("key_num")
+		fmt.Println(keyboards)
 	case 5:
 		keyboards, err = repository.SerchKeyboardByProfile(a.db, serchKeyboard)
+		fmt.Println("profile")
+		fmt.Println(keyboards)
 	}
-	fmt.Println(keyboards)
 
 	if err != nil && err == sql.ErrNoRows {
 		return nil, err
